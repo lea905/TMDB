@@ -6,6 +6,7 @@ use App\Repository\MovieRepository;
 use App\Service\TmdbRequestService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/movies')]
@@ -57,10 +58,13 @@ class MovieController extends AbstractController
      * @param string $genre
      * @return Response
      */
-    #[Route('/{genre}', name: 'app_movies_genre')]
+    #[Route('/search/{genre}', name: 'app_movies_genre')]
     public function genre(string $genre): Response
     {
         $movies = $this->movieRepository->findByGenre($genre);
+        if($movies === null) {
+            throw new NotFoundHttpException();
+        }
 
         return $this->render('movie/genre.html.twig', [
             'movies' => $movies,
@@ -78,7 +82,7 @@ class MovieController extends AbstractController
     {
         $movies = $this->tmdb->getMoviesNowPlaying($this->token);
 
-        return $this->render('movie/now_playing.html.twig', [
+        return $this->render('movie/popular.html.twig', [
             'movies' => $movies,
         ]);
     }

@@ -16,6 +16,9 @@ class Movie
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    private ?int $tmdbId = null;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -103,7 +106,6 @@ class Movie
 
         return $this;
     }
-
 
     public function getGenres(): array
     {
@@ -216,5 +218,15 @@ class Movie
         }
 
         return $this;
+    }
+
+    public function getTmdbId(): ?int
+    {
+        return $this->tmdbId;
+    }
+
+    public function setTmdbId(?int $tmdbId): static
+    {
+        $this->tmdbId = $tmdbId;
     }
 }

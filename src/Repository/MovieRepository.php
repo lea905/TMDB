@@ -37,13 +37,16 @@ class MovieRepository extends ServiceEntityRepository
      * @param string $genre
      * @return array
      */
-    public function findByGenre(string $genre): array
+    public function findByGenre(string $genre): array | null
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.genres LIKE :genre')
-            ->setParameter('genre', '%' . $genre . '%')
-            ->getQuery()
-            ->getResult();
+        if(TmdbGenres::searchGenre($genre) !== null){
+            return $this->createQueryBuilder('m')
+                ->andWhere('m.genres LIKE :genre')
+                ->setParameter('genre', '%' . $genre . '%')
+                ->getQuery()
+                ->getResult();
+        };
+        return null;
     }
 
 }
