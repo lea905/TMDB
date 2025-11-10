@@ -1,0 +1,12 @@
+//Personnaliser les variables avant d'importer Bootstrap
+$primary: #ff5733;  // couleur principale
+$font-family-base: 'Arial', sans-serif;
+
+//Importer Bootstrap
+@import "bootstrap/bootstrap";
+
+
+//Ajouter ton CSS personnalisé
+body {
+    background-color: #f0f0f0;
+}
