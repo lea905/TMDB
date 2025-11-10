@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -22,6 +24,24 @@ class User
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, View>
+     */
+    #[ORM\ManyToMany(targetEntity: View::class, mappedBy: 'userId')]
+    private Collection $views;
+
+    /**
+     * @var Collection<int, WatchList>
+     */
+    #[ORM\OneToMany(targetEntity: WatchList::class, mappedBy: 'userId')]
+    private Collection $watchLists;
+
+    public function __construct()
+    {
+        $this->views = new ArrayCollection();
+        $this->watchLists = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -67,6 +87,63 @@ class User
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, View>
+     */
+    public function getViews(): Collection
+    {
+        return $this->views;
+    }
+
+    public function addView(View $view): static
+    {
+        if (!$this->views->contains($view)) {
+            $this->views->add($view);
+            $view->addUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeView(View $view): static
+    {
+        if ($this->views->removeElement($view)) {
+            $view->removeUserId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WatchList>
+     */
+    public function getWatchLists(): Collection
+    {
+        return $this->watchLists;
+    }
+
+    public function addWatchList(WatchList $watchList): static
+    {
+        if (!$this->watchLists->contains($watchList)) {
+            $this->watchLists->add($watchList);
+            $watchList->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWatchList(WatchList $watchList): static
+    {
+        if ($this->watchLists->removeElement($watchList)) {
+            // set the owning side to null (unless already changed)
+            if ($watchList->getUserId() === $this) {
+                $watchList->setUserId(null);
+            }
+        }
 
         return $this;
     }

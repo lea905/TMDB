@@ -4,10 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48f629c5-077a-4c8c-86f3-cb77c4e7e48d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/TMDB.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/TMDB.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+    <list default="true" id="48f629c5-077a-4c8c-86f3-cb77c4e7e48d" name="Changes" comment="[ADD] entity">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Episode.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Episode.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Movie.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Movie.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Season.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Season.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Series.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Series.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/View.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/View.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/WatchList.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/WatchList.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -206,11 +211,25 @@
       <workItem from="1762180361695" duration="8000" />
       <workItem from="1762181712952" duration="3011000" />
       <workItem from="1762346940204" duration="28000" />
-      <workItem from="1762759920193" duration="4522000" />
+      <workItem from="1762759920193" duration="6705000" />
     </task>
+    <task id="LOCAL-00001" summary="[ADD] entity">
+      <option name="closed" value="true" />
+      <created>1762765827950</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1762765827950</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit: Symfony Webapp (TMDB project)" />
+    <MESSAGE value="[ADD] entity" />
+    <option name="LAST_COMMIT_MESSAGE" value="[ADD] entity" />
   </component>
 </project>

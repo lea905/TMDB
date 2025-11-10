@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SeriesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -27,9 +29,6 @@ class Series
     private ?string $status = null;
 
     #[ORM\Column]
-    private ?int $idWatchList = null;
-
-    #[ORM\Column]
     private ?int $tmdbId = null;
 
     #[ORM\Column(length: 255)]
@@ -46,6 +45,38 @@ class Series
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $releaseDate = null;
+
+    /**
+     * @var Collection<int, Season>
+     */
+    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'seriesId', orphanRemoval: true)]
+    private Collection $seasons;
+
+    /**
+     * @var Collection<int, Creator>
+     */
+    #[ORM\ManyToMany(targetEntity: Creator::class, inversedBy: 'series')]
+    private Collection $creators;
+
+    /**
+     * @var Collection<int, ProductionCompanie>
+     */
+    #[ORM\ManyToMany(targetEntity: ProductionCompanie::class, inversedBy: 'series')]
+    private Collection $productionCompanies;
+
+    /**
+     * @var Collection<int, WatchList>
+     */
+    #[ORM\ManyToMany(targetEntity: WatchList::class, mappedBy: 'series')]
+    private Collection $watchLists;
+
+    public function __construct()
+    {
+        $this->seasons = new ArrayCollection();
+        $this->creators = new ArrayCollection();
+        $this->productionCompanies = new ArrayCollection();
+        $this->watchLists = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -187,6 +218,111 @@ class Series
     public function setReleaseDate(\DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Season>
+     */
+    public function getSeasons(): Collection
+    {
+        return $this->seasons;
+    }
+
+    public function addSeason(Season $season): static
+    {
+        if (!$this->seasons->contains($season)) {
+            $this->seasons->add($season);
+            $season->setSeriesId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSeason(Season $season): static
+    {
+        if ($this->seasons->removeElement($season)) {
+            // set the owning side to null (unless already changed)
+            if ($season->getSeriesId() === $this) {
+                $season->setSeriesId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Creator>
+     */
+    public function getCreators(): Collection
+    {
+        return $this->creators;
+    }
+
+    public function addCreator(Creator $creator): static
+    {
+        if (!$this->creators->contains($creator)) {
+            $this->creators->add($creator);
+        }
+
+        return $this;
+    }
+
+    public function removeCreator(Creator $creator): static
+    {
+        $this->creators->removeElement($creator);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductionCompanie>
+     */
+    public function getProductionCompanies(): Collection
+    {
+        return $this->productionCompanies;
+    }
+
+    public function addProductionCompany(ProductionCompanie $productionCompany): static
+    {
+        if (!$this->productionCompanies->contains($productionCompany)) {
+            $this->productionCompanies->add($productionCompany);
+        }
+
+        return $this;
+    }
+
+    public function removeProductionCompany(ProductionCompanie $productionCompany): static
+    {
+        $this->productionCompanies->removeElement($productionCompany);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WatchList>
+     */
+    public function getWatchLists(): Collection
+    {
+        return $this->watchLists;
+    }
+
+    public function addWatchList(WatchList $watchList): static
+    {
+        if (!$this->watchLists->contains($watchList)) {
+            $this->watchLists->add($watchList);
+            $watchList->addSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWatchList(WatchList $watchList): static
+    {
+        if ($this->watchLists->removeElement($watchList)) {
+            $watchList->removeSeries($this);
+        }
 
         return $this;
     }

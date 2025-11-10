@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EpisodeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,9 +17,6 @@ class Episode
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $seasonId = null;
-
-    #[ORM\Column]
     private ?int $number = null;
 
     #[ORM\Column(length: 255)]
@@ -28,6 +27,21 @@ class Episode
 
     #[ORM\Column(length: 255)]
     private ?string $resume = null;
+
+    #[ORM\ManyToOne(inversedBy: 'episodes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Season $seasonId = null;
+
+    /**
+     * @var Collection<int, View>
+     */
+    #[ORM\ManyToMany(targetEntity: View::class, mappedBy: 'elementId')]
+    private Collection $views;
+
+    public function __construct()
+    {
+        $this->views = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -97,6 +111,33 @@ class Episode
     public function setResume(string $resume): static
     {
         $this->resume = $resume;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, View>
+     */
+    public function getViews(): Collection
+    {
+        return $this->views;
+    }
+
+    public function addView(View $view): static
+    {
+        if (!$this->views->contains($view)) {
+            $this->views->add($view);
+            $view->addElementId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeView(View $view): static
+    {
+        if ($this->views->removeElement($view)) {
+            $view->removeElementId($this);
+        }
 
         return $this;
     }

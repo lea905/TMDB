@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MovieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,9 +15,6 @@ class Movie
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $idWatchList = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -31,6 +30,31 @@ class Movie
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $releaseDate = null;
+
+    /**
+     * @var Collection<int, View>
+     */
+    #[ORM\ManyToMany(targetEntity: View::class, mappedBy: 'movieId')]
+    private Collection $views;
+
+    /**
+     * @var Collection<int, ProductionCompanie>
+     */
+    #[ORM\ManyToMany(targetEntity: ProductionCompanie::class, inversedBy: 'movies')]
+    private Collection $productionCompanies;
+
+    /**
+     * @var Collection<int, WatchList>
+     */
+    #[ORM\ManyToMany(targetEntity: WatchList::class, mappedBy: 'movies')]
+    private Collection $watchLists;
+
+    public function __construct()
+    {
+        $this->views = new ArrayCollection();
+        $this->productionCompanies = new ArrayCollection();
+        $this->watchLists = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -112,6 +136,84 @@ class Movie
     public function setReleaseDate(\DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, View>
+     */
+    public function getViews(): Collection
+    {
+        return $this->views;
+    }
+
+    public function addView(View $view): static
+    {
+        if (!$this->views->contains($view)) {
+            $this->views->add($view);
+            $view->addMovieId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeView(View $view): static
+    {
+        if ($this->views->removeElement($view)) {
+            $view->removeMovieId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductionCompanie>
+     */
+    public function getProductionCompanies(): Collection
+    {
+        return $this->productionCompanies;
+    }
+
+    public function addProductionCompany(ProductionCompanie $productionCompany): static
+    {
+        if (!$this->productionCompanies->contains($productionCompany)) {
+            $this->productionCompanies->add($productionCompany);
+        }
+
+        return $this;
+    }
+
+    public function removeProductionCompany(ProductionCompanie $productionCompany): static
+    {
+        $this->productionCompanies->removeElement($productionCompany);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WatchList>
+     */
+    public function getWatchLists(): Collection
+    {
+        return $this->watchLists;
+    }
+
+    public function addWatchList(WatchList $watchList): static
+    {
+        if (!$this->watchLists->contains($watchList)) {
+            $this->watchLists->add($watchList);
+            $watchList->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWatchList(WatchList $watchList): static
+    {
+        if ($this->watchLists->removeElement($watchList)) {
+            $watchList->removeMovie($this);
+        }
 
         return $this;
     }
