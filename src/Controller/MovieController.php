@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\MovieRepository;
 use App\Service\TmdbRequestService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,22 +11,87 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/movies')]
 class MovieController extends AbstractController
 {
-    #[Route('/now_playing', name: 'movies_now_playing')]
-    public function now_playing(TmdbRequestService $tmdb): Response
+
+    private string $token;
+
+    public function __construct(private readonly TmdbRequestService $tmdb,
+                                private readonly MovieRepository    $movieRepository)
     {
-        $token = $_ENV['TMDB_TOKEN'];
-        $movies = $tmdb->getMoviesNowPlaying($token);
+        $this->token = $_ENV['TMDB_TOKEN'];
+    }
+
+    /**
+     * Affiche tout les films présents dans la BDD
+     *
+     * @return Response
+     */
+    #[Route('', name: 'movies')]
+    public function index(): Response
+    {
+        $movies = $this->movieRepository->findAll();
+
+        return $this->render('movie/index.html.twig', [
+            'movies' => $movies,
+        ]);
+    }
+
+    /**
+     * Affiche un film identifié par son id
+     *
+     * @param int $id
+     * @return Response
+     */
+    #[Route('/show/{id}', name: 'app_movies_show')]
+    public function show(int $id): Response
+    {
+        $movie = $this->movieRepository->findOneById($id);
+
+        return $this->render('movie/show.html.twig', [
+            'movie' => $movie,
+        ]);
+    }
+
+    /**
+     * Affiche les films du genre souhaité
+     *
+     * @param string $genre
+     * @return Response
+     */
+    #[Route('/{genre}', name: 'app_movies_genre')]
+    public function genre(string $genre): Response
+    {
+        $movies = $this->movieRepository->findByGenre($genre);
+
+        return $this->render('movie/genre.html.twig', [
+            'movies' => $movies,
+            'genre' => $genre,
+        ]);
+    }
+
+    /**
+     * Affiche les films actuellement au cinéma
+     *
+     * @return Response
+     */
+    #[Route('/now_playing', name: 'app_movies_now_playing')]
+    public function now_playing(): Response
+    {
+        $movies = $this->tmdb->getMoviesNowPlaying($this->token);
 
         return $this->render('movie/now_playing.html.twig', [
             'movies' => $movies,
         ]);
     }
 
-    #[Route('/upcoming', name: 'movies_upcoming')]
-    public function upcoming(TmdbRequestService $tmdb): Response
+    /**
+     * Affiche les films pas encore sortis
+     *
+     * @return Response
+     */
+    #[Route('/upcoming', name: 'app_movies_upcoming')]
+    public function upcoming(): Response
     {
-        $token = $_ENV['TMDB_TOKEN'];
-        $movies = $tmdb->getMoviesUpcoming($token);
+        $movies = $this->tmdb->getMoviesUpcoming($this->token);
 
         return $this->render('movie/upcoming.html.twig', [
             'movies' => $movies,
