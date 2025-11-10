@@ -30,4 +30,23 @@ class TmdbRequestService
         // Ici on renvoie une liste d’objets Movie
         return $this->movieFactory->createMultipleFromTmdbData($data);
     }
+
+    public function getMoviesUpcoming(string $token): array
+    {
+        $response = $this->httpClient->request('GET', 'https://api.themoviedb.org/3/movie/upcoming', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'accept' => 'application/json',
+            ],
+            'query' => [
+                'language' => 'fr-FR',
+                'page' => 1,
+            ],
+        ]);
+
+        $data = $response->toArray();
+
+        // Ici on renvoie une liste d’objets Movie
+        return $this->movieFactory->createMultipleFromTmdbData($data);
+    }
 }
