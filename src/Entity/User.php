@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -22,6 +24,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Veuillez entrer un email.")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $mail = null;
 
     #[ORM\Column(length: 255)]
@@ -152,8 +156,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        // TODO: Implement getRoles() method.
+        return ['ROLE_USER'];
     }
+
 
     public function eraseCredentials(): void
     {
@@ -162,6 +167,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        // TODO: Implement getUserIdentifier() method.
+        return $this->mail;
     }
+
 }
